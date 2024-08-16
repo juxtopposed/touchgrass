@@ -1,219 +1,222 @@
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>touch grass</title>
+		<meta name="description" content="touch grass" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+		/>
 
-<head>
-  <meta charset="UTF-8">
-  <title>touch grass</title>
-  <meta name="description" content="touch grass">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<style>
+			@import url('https://fonts.googleapis.com/css?family=Inter:400');
 
-  <style>
-    @import url('https://fonts.googleapis.com/css?family=Inter:400');
+			body {
+				background: url(grass.png);
+				background-size: cover;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+				width: 100vw;
+				margin: 0;
+				overflow: hidden;
+				font-family: 'Inter';
+			}
 
-    body {
-      background: url(grass.png);
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      width: 100vw;
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Inter';
-    }
+			.spark {
+				position: absolute;
+				width: 30px;
+				height: 8px;
+				border-radius: 3px;
+				background-color: white;
+				transform: none;
+			}
 
-    .spark {
-      position: absolute;
-      width: 30px;
-      height: 8px;
-      border-radius: 3px;
-      background-color: white;
-      transform: none;
-    }
+			a {
+				text-decoration: none;
+				color: rgba(255, 255, 255, 0.5);
+				position: fixed;
+				top: 0;
+				right: 0;
+				padding: 2rem;
+			}
 
-    a {
-      text-decoration: none;
-      color: rgba(255, 255, 255, 0.5);
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 2rem;
-    }
+			a:hover {
+				color: #fff;
+			}
 
-    a:hover {
-      color: #fff;
-    }
+			.milestone-message {
+				position: fixed;
+				top: 1rem;
+				left: 1rem;
+				background-color: rgba(255, 255, 255, 0.4);
+				backdrop-filter: blur(30px);
+				-webkit-backdrop-filter: blur(30px);
+				color: black;
+				padding: 1rem;
+				border-radius: 1rem;
+				z-index: 1000;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				max-width: 26rem;
+			}
 
-    .milestone-message {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      background-color: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      color: black;
-      padding: 1rem;
-      border-radius: 1rem;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      max-width: 26rem;
-    }
+			.milestone-message button {
+				background: none;
+				border: none;
+				font-size: 16px;
+				cursor: pointer;
+				color: black;
+				margin-left: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box" class="container"></div>
+		<a
+			href="https://github.com/juxtopposed/touchgrass"
+			target="_blank"
+			class="material-icons"
+		>
+			help
+		</a>
 
-    .milestone-message button {
-      background: none;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      color: black;
-      margin-left: 10px;
-    }
-  </style>
+		<script>
+			let styleSheet = null;
+			const SPARK_ELEMENT_WIDTH = 30;
+			const DISTANCE = 40;
+			const RANDOMNESS_ON = true;
+			const milestoneMessages = {
+				50: "wow, you've touched grass 50 times! :)",
+				100: "amazing, you've touched grass 100 times! :D",
+				500: '500 times!!! leave some grass for the rest of us.',
+				1000: 'alright slow down. 1000 times is the safe daily limit. back to your phone now.',
+				10000: "you've touched grass 10,000 times (good job i guess)",
+				50000: '50K! you did it! alright enough grass, go back home (or give your mouse some rest)',
+				100000: "alright it's not even cool anymore. get some screen time...",
+				500000: 'idk what to make of 500,000 times of touching grass... but yayyy you did it.',
+				1000000:
+					"you've touched grass 1 MILLION times! phew! you may go home now, no more grass or milestones for you.",
+				10000000: 'why are you still here?...',
+			};
 
-</head>
+			function createTransformSteps(...steps) {
+				if (steps.length === 0) {
+					throw new Error(
+						'arguments to createTransformSteps should never be empty!'
+					);
+				}
 
-<body>
-  <div id="box" class="container"></div>
-  <a href="https://github.com/juxtopposed/touchgrass" target="_blank" class="material-icons">help</a>
+				return steps.reduce(
+					(output, step, index) => [
+						...output,
+						index === 0 ? step : `${output[index - 1]} ${step}`,
+					],
+					[]
+				);
+			}
 
-  <script>
-    let styleSheet = null;
-    const SPARK_ELEMENT_WIDTH = 30;
-    const DISTANCE = 40;
-    const RANDOMNESS_ON = true;
-    const milestones = [50, 100, 500, 1000, 10000, 50000, 100000, 500000, 1000000];
+			const dynamicAnimation = (name, rotation) => {
+				if (!styleSheet) {
+					styleSheet = document.createElement('style');
+					document.head.appendChild(styleSheet);
+				}
 
-    function createTransformSteps() {
-      if (Array.from(arguments).length === 0) {
-        throw new Error("arguments to createTransformSteps should never be empty!");
-      }
+				const randomDist = RANDOMNESS_ON
+					? Math.floor(
+							Math.random() * DISTANCE * 0.7 - DISTANCE * 0.35
+					  )
+					: 0;
 
-      const inputSteps = Array.from(arguments);
-      const outputSteps = [inputSteps.shift()];
-      inputSteps.forEach((step, i) => {
-        outputSteps.push(`${outputSteps[i]} ${step}`);
-      });
+				const [s1, s2, s3] = [
+					`translate(-50%, -50%) rotate(${rotation}deg) translate(10px, 0px)`,
+					`translate(${
+						DISTANCE + randomDist
+					}px, 0px) scale(0.5, 0.5)`,
+					`translate(${SPARK_ELEMENT_WIDTH / 2}px, 0) scale(0, 0)`,
+				].reduce((acc, step, index) => {
+					acc.push(index === 0 ? step : `${acc[index - 1]} ${step}`);
+					return acc;
+				}, []);
 
-      return outputSteps;
-    }
+				styleSheet.sheet.insertRule(
+					`@keyframes ${name} {
+				            0% { transform: ${s1}; }
+				            70% { transform: ${s2}; }
+				            100% { transform: ${s3}; }
+				          }`,
+					styleSheet.sheet.cssRules.length
+				);
+			};
 
-    const dynamicAnimation = (name, rotation) => {
-      if (!styleSheet) {
-        styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        document.head.appendChild(styleSheet);
-      }
+			document.body.addEventListener('pointerdown', (e) => {
+				const center = { x: e.pageX, y: e.pageY };
+				incrementClickCount();
+				makeBurst(center);
+			});
 
-      const randomDist = RANDOMNESS_ON
-        ? Math.floor((Math.random() - 0.5) * DISTANCE * 0.7)
-        : 0;
+			const makeBurst = (center) => {
+				const fragment = document.createDocumentFragment();
+				for (let i = 0; i < 8; i++) {
+					const rotation =
+						45 * i +
+						(RANDOMNESS_ON
+							? Math.floor(Math.random() * 34) - 17
+							: 0);
+					fragment.appendChild(makeSpark(center, rotation));
+				}
+				document.body.appendChild(fragment);
+			};
 
-      const [s1, s2, s3] = createTransformSteps(
-        `translate(-50%, -50%) rotate(${rotation}deg) translate(10px, 0px)`,
-        `translate(${DISTANCE + randomDist}px, 0px) scale(0.5, 0.5)`,
-        `translate(${SPARK_ELEMENT_WIDTH / 2}px, 0) scale(0, 0)`
-      );
+			const makeSpark = (center, rotation) => {
+				const div = document.createElement('div');
+				const aniName = `disappear_${rotation}`;
+				dynamicAnimation(aniName, rotation);
 
-      styleSheet.sheet.insertRule(
-        `@keyframes ${name} {
-       0% {
-         transform: ${s1};
-       }
-       70% {
-         transform: ${s2};
-       }
-       100% {
-         transform: ${s3};
-       }
-    }`,
-        styleSheet.length
-      );
-    };
+				div.className = 'spark';
+				div.style.cssText = `
+			          left: ${center.x}px;
+			          top: ${center.y}px;
+			          animation: ${aniName} 500ms ease-out both;
+			        `;
 
-    document.body.addEventListener("pointerdown", (e) => {
-      const center = { x: e.pageX, y: e.pageY };
-      incrementClickCount();
-      makeBurst(center);
-    });
+				setTimeout(() => div.remove(), 1000);
+				return div;
+			};
 
-    const makeBurst = (center) => {
-      for (let i = 0; i < 8; i++) {
-        const randomSpace = RANDOMNESS_ON
-          ? Math.floor(-17 + Math.random() * 34)
-          : 0;
-        makeSpark(center, 45 * i + randomSpace);
-      }
-    };
+			const incrementClickCount = () => {
+				let clickCount =
+					(parseInt(localStorage.getItem('clickCount')) || 0) + 1;
+				localStorage.setItem('clickCount', clickCount);
+				checkMilestones(clickCount);
+			};
 
-    const makeSpark = (center, rotation) => {
-      const div = document.createElement("div");
-      const aniName = `disappear_${rotation}`;
-      dynamicAnimation(aniName, rotation);
+			const checkMilestones = (clickCount) => {
+				let message = milestoneMessages[clickCount];
+				if (message) showMilestoneMessage(message);
+			};
 
-      div.classList.add("spark");
-      div.style.left = `${center.x}px`;
-      div.style.top = `${center.y}px`;
-      div.style.animation = `${aniName} 500ms ease-out both`;
-      document.body.append(div);
-      setTimeout(() => {
-        document.body.removeChild(div);
-      }, 1000);
-    };
+			const showMilestoneMessage = (message) => {
+				const messageDiv = document.createElement('div');
+				messageDiv.className = 'milestone-message';
+				messageDiv.innerHTML = `
+			          <span>${message}</span>
+			          <button>×</button>
+			        `;
 
-    const incrementClickCount = () => {
-      let clickCount = parseInt(localStorage.getItem("clickCount")) || 0;
-      clickCount++;
-      localStorage.setItem("clickCount", clickCount);
-      checkMilestones(clickCount);
-    };
+				const closeButton = messageDiv.querySelector('button');
+				closeButton.addEventListener('click', () =>
+					messageDiv.remove()
+				);
 
-    const milestoneMessages = {
-      50: "wow, you've touched grass 50 times! :)",
-      100: "amazing, you've touched grass 100 times! :D",
-      500: "500 times!!! leave some grass for the rest of us.",
-      1000: "alright slow down. 1000 times is the safe daily limit. back to your phone now.",
-      10000: "you've touched grass 10,000 times (good job i guess)",
-      50000: "50K! you did it! alright enough grass, go back home (or give your mouse some rest)",
-      100000: "alright it's not even cool anymore. get some screen time...",
-      500000: "idk what to make of 500,000 times of touching grass... but yayyy you did it.",
-      1000000: "you've touched grass 1 MILLION times! phew! you may go home now, no more grass or milestones for you.",
-      10000000: "why are you still here?..."
-    };
+				document.body.appendChild(messageDiv);
 
-    const checkMilestones = (clickCount) => {
-      if (milestones.includes(clickCount)) {
-        const message = milestoneMessages[clickCount];
-        showMilestoneMessage(message);
-      }
-    };
-
-    const showMilestoneMessage = (message) => {
-      const messageDiv = document.createElement("div");
-      messageDiv.classList.add("milestone-message");
-
-      const text = document.createElement("span");
-      text.innerText = message;
-
-      const closeButton = document.createElement("button");
-      closeButton.innerText = "×";
-      closeButton.addEventListener("click", () => {
-        document.body.removeChild(messageDiv);
-      });
-
-      messageDiv.appendChild(text);
-      messageDiv.appendChild(closeButton);
-      document.body.appendChild(messageDiv);
-
-      setTimeout(() => {
-        if (document.body.contains(messageDiv)) {
-          document.body.removeChild(messageDiv);
-        }
-      }, 10000);
-    };
-  </script>
-</body>
-
+				setTimeout(() => messageDiv.remove(), 10000);
+			};
+		</script>
+	</body>
 </html>
