@@ -145,10 +145,10 @@
 
 				styleSheet.sheet.insertRule(
 					`@keyframes ${name} {
-            0% { transform: ${s1}; }
-            70% { transform: ${s2}; }
-            100% { transform: ${s3}; }
-          }`,
+				            0% { transform: ${s1}; }
+				            70% { transform: ${s2}; }
+				            100% { transform: ${s3}; }
+				          }`,
 					styleSheet.sheet.cssRules.length
 				);
 			};
@@ -179,10 +179,10 @@
 
 				div.className = 'spark';
 				div.style.cssText = `
-          left: ${center.x}px;
-          top: ${center.y}px;
-          animation: ${aniName} 500ms ease-out both;
-        `;
+			          left: ${center.x}px;
+			          top: ${center.y}px;
+			          animation: ${aniName} 500ms ease-out both;
+			        `;
 
 				setTimeout(() => div.remove(), 1000);
 				return div;
@@ -204,9 +204,9 @@
 				const messageDiv = document.createElement('div');
 				messageDiv.className = 'milestone-message';
 				messageDiv.innerHTML = `
-          <span>${message}</span>
-          <button>×</button>
-        `;
+			          <span>${message}</span>
+			          <button>×</button>
+			        `;
 
 				const closeButton = messageDiv.querySelector('button');
 				closeButton.addEventListener('click', () =>
