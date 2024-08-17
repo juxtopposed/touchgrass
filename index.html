@@ -134,6 +134,7 @@
     };
 
     document.body.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
       const center = { x: e.pageX, y: e.pageY };
       incrementClickCount();
       makeBurst(center);
