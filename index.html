@@ -137,7 +137,7 @@
       });
     };
 
-    (async ()=> {
+    async function setBackground() {
       let currentDayTime;
       try {
         const { latitude, longitude } = await getLocation();
@@ -164,7 +164,11 @@
 
       document.body.style.setProperty("--background", backgroundUrl);
       document.getElementById("sunriseSunset").style.opacity = "1";
-    })();
+    };
+
+    setBackground();
+    const oneHourMs = 1000 * 60 * 60;
+    setInterval(setBackground, oneHourMs);
   </script>
 
   <script>
