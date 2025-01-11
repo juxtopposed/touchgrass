@@ -181,7 +181,7 @@
       100000: "alright it's not even cool anymore. get some screen time...",
       500000: "idk what to make of 500,000 times of touching grass... but yayyy you did it.",
       1000000: "you've touched grass 1 MILLION times! phew! you may go home now, no more grass or milestones for you.",
-      10000000: "why are you still here?..."
+      10000000: "how are you still here?..."
     };
 
     const checkMilestones = (clickCount) => {
@@ -189,7 +189,7 @@
         const message = milestoneMessages[clickCount];
         showMilestoneMessage(message);
         if (clickCount == 10000000) {
-          location.href = 'https://youtu.be/dQw4w9WgXcQ?si=hVsMtr3rG70VTCIx'
+          window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", '_blank').focus();     
         }
       }
     };
