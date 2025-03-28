@@ -144,6 +144,7 @@
       try {
         const { latitude, longitude } = await getLocation();
         currentDayTime = await getCurrentDayTime({ latitude, longitude });
+        document.getElementById("sunriseSunset").style.opacity = "1";
       } catch (error) {
         console.error(error);
       }
@@ -163,9 +164,7 @@
           backgroundUrl = "url(assets/grass.png)";
           break;
       }
-
       document.body.style.setProperty("--background", backgroundUrl);
-      document.getElementById("sunriseSunset").style.opacity = "1";
     };
 
     updateBackground();
