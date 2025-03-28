@@ -189,8 +189,9 @@
         const message = milestoneMessages[clickCount];
         showMilestoneMessage(message);
         if (clickCount == 10000000) {
-          setTimeout(2)
-          window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", '_blank').focus();     
+          setTimeout(() => {
+            window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", '_blank').focus();
+          }, 2000);
         }
       }
     };
